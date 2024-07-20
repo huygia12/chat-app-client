@@ -7,7 +7,7 @@ module.exports = {
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
   ],
-  prefix: "y",
+  separator: ":",
   theme: {
     container: {
       center: true,
@@ -23,14 +23,6 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -51,6 +43,68 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+
+        //main background color
+        bkg: {
+          1: {
+            light: "rgb(var(--color-bkg--light) / <alpha-value>)",
+            dark: "rgb(var(--color-bkg--dark) / <alpha-value>)",
+          },
+          2: {
+            light: "#FFF",
+            dark: "#1f2937",
+          },
+          3: {
+            light: "#f9fafb",
+            dark: "#374151",
+          },
+        },
+        //components background color (input component)
+        secondary: {
+          light: "#f9fafb",
+          dark: "#374151",
+        },
+        //addition text colors beside white and black
+        content: {
+          1: "#111827",
+          2: "#9ca3af",
+        },
+        //primary theme of the app (cyan)
+        primary: {
+          light: "#06b6d4",
+          dark: "#06b6d4",
+        },
+        //color around primary theme (ring)
+        effect: {
+          light: "#a8cfda",
+          dark: "#155e75",
+        },
+        cyan: {
+          50: "#ecfeff",
+          100: "#cffafe",
+          200: "#a5f3fc",
+          300: "#67e8f9",
+          400: "#22d3ee",
+          500: "#06b6d4",
+          600: "#0891b2",
+          700: "#0e7490",
+          800: "#155e75",
+          900: "#164e63",
+          950: "#083344",
+        },
+        gray: {
+          300: "#d1d5db",
+          400: "#9ca3af",
+          500: "#6b7280",
+          600: "#4b5563",
+        },
+        yellow: {
+          300: "#fde047",
+          400: "#facc15",
+          500: "#eab308",
+        },
+        white: "#FFF",
+        black: "#000",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -70,6 +124,18 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      width: {
+        myLayout: "100rem",
+        adminLayout: "100rem",
+      },
+      minHeight: {
+        myLayout: "40rem",
+        adminLayout: "40rem",
+      },
+      boxShadow: {
+        general:
+          "1px 2px 10px 3px rgba(0, 0, 0, 0.3), 0 -2px 4px -2px rgba(0, 0, 0, 0.1)",
       },
     },
   },

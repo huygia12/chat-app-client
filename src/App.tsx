@@ -1,12 +1,12 @@
-import { Button } from "./components/ui/button";
+import { RouterProvider } from "react-router-dom";
+import routes from "./pages/routes";
+import { DarkModeProvider } from "./context/DarkModeContext";
 
 function App() {
   return (
-    <>
-      <div>
-        <Button variant={"destructive"}>Click me</Button>
-      </div>
-    </>
+    <DarkModeProvider>
+      <RouterProvider router={routes} />
+    </DarkModeProvider>
   );
 }
 
