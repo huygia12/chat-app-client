@@ -1,8 +1,8 @@
-import Gender from "./enums/Gender";
-import Role from "./enums/Role";
+import Gender from "./enums/gender";
+import Role from "./enums/role";
 
 interface User {
-  userId: number;
+  userId: string;
   email: string;
   username: string;
   firstName: string;
@@ -19,4 +19,11 @@ interface User {
   deletedAt: Date;
 }
 
-export { type User };
+interface UserDecoded {
+  userId: string;
+  email: string;
+  username: string;
+  role: Role;
+}
+
+export type { User, UserDecoded };

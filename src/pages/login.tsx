@@ -1,18 +1,15 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { HttpStatusCode } from "axios";
-import { useCurrUser } from "@/utils/customHook";
-import routes from "./routes";
-import { axiosInstance, reqConfig } from "@/utils/axiosConfig";
+import { axiosInstance, reqConfig } from "@/utils/axios-config";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { User } from "@/entities/user";
-import Role from "@/entities/enums/Role";
 import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { ReactEventHandler, useState } from "react";
+import { useCurrUser } from "@/utils/custom-hook";
 
 const LoginSchema = z.object({
   email: z.string().email({ message: "Invalid Email!" }),
@@ -32,33 +29,71 @@ const Login = () => {
   } = useForm<LoginForm>({
     resolver: zodResolver(LoginSchema),
   });
-  const location = useLocation();
-  const from: string = location.state?.from?.pathname ?? "/";
-  const { setCurrUser } = useCurrUser();
   const [passwordVisibility, setPasswordvisibility] = useState(false);
+  const { getUserDecoded, setToken } = useCurrUser();
 
   const handleLoginFormSubmission: SubmitHandler<LoginForm> = async (data) => {
     try {
-      const res = await axiosInstance.post<{
-        message: string;
-        info: User;
-      }>(
-        "/users/login",
+      const res = await axiosInstance.post<{ access_token: string }>(
+        "http://localhost:8080/api/v1/auth/login",
         {
-          email: data.email.trim(),
-          password: data.password.trim(),
+          payload: {
+            user: {
+              email: data.email.trim(),
+              password: data.password.trim(),
+            },
+          },
         },
         reqConfig
       );
-      const user: User = res.data.info;
-      setCurrUser(user);
-      await routes.navigate(
-        user.role === Role.ADMIN ? "/admin" : from === "/login" ? "/" : from,
-        {
-          unstable_viewTransition: true,
-          replace: true,
+
+      setToken(res.data.access_token);
+      console.debug(JSON.stringify(getUserDecoded()));
+      // await routes.navigate(
+      //   "/messages",
+      //   // user.role === Role.ADMIN ? "/admin" : from === "/login" ? "/" : from,
+      //   {
+      //     unstable_viewTransition: true,
+      //     replace: true,
+      //   }
+      // );
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status == HttpStatusCode.Conflict) {
+          setError("root", {
+            message: "Please logout your current account!",
+          });
+        } else if (error.response?.status == HttpStatusCode.BadRequest) {
+          setError("root", {
+            message: "Account none exist!",
+          });
+        } else if (error.response?.status == HttpStatusCode.Unauthorized) {
+          setError("password", {
+            message: "Wrong password!",
+          });
+        } else {
+          setError("root", {
+            message: "This account currently cannot login!",
+          });
         }
+        // Handle error response if available
+        console.error(`Error response: ${JSON.stringify(error.response)}`);
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
+  };
+
+  const handleRefreshToken: ReactEventHandler = async (event) => {
+    event.preventDefault();
+    console.debug("refresh");
+    try {
+      const res = await axiosInstance.get(
+        "http://localhost:8010/api/v1/auth/refresh",
+        reqConfig
       );
+
+      console.debug(JSON.stringify(res));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status == HttpStatusCode.Conflict) {
@@ -95,7 +130,7 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full h-full grid grid-cols-2">
+    <div className="w-full h-full flex flex-col 2xl:grid 2xl:grid-cols-2">
       <form
         onSubmit={handleSubmit(handleLoginFormSubmission)}
         className="flex items-center justify-center my-10"
@@ -121,6 +156,7 @@ const Login = () => {
                 {...register("email")}
                 id="email"
                 type="email"
+                defaultValue={"hung@gmail.com"}
                 placeholder="abc@example.com"
                 size={40}
                 onKeyDown={(e) => handleEnterKeyEvent(e)}
@@ -148,8 +184,9 @@ const Login = () => {
               <div className="relative">
                 <Input
                   {...register("password")}
+                  defaultValue={"123456a@"}
                   id="password"
-                  type="password"
+                  type={passwordVisibility ? "text" : "password"}
                   size={40}
                   onKeyDown={(e) => handleEnterKeyEvent(e)}
                   autoCorrect="off"
@@ -175,6 +212,13 @@ const Login = () => {
             <Button type="submit" variant="default" className="w-full mt-4">
               Login
             </Button>
+            <Button
+              onClick={handleRefreshToken}
+              variant="default"
+              className="w-full mt-4"
+            >
+              Refresh Token
+            </Button>
             {/* <Button variant="outline" className="w-full">
               Login with Google
             </Button> */}
@@ -191,7 +235,7 @@ const Login = () => {
           </div>
         </div>
       </form>
-      <div className="hidden bg-muted lg:block">
+      <div className="hidden bg-muted xl:block">
         <img
           src="/placeholder.svg"
           alt="Image"

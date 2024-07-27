@@ -1,13 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
-import Login from "./Login";
-import PageNotFound from "./PageNotFound";
-import UserLayout from "@/layout/UserLayout";
-import Unauthorized from "./Unauthorized";
-import Homepage from "./Homepage";
-import Signup from "./Signup";
-import ProtectedRoute from "@/components/effect/ProtectedRoute";
-import Role from "@/entities/enums/Role";
-import AdminLayout from "@/layout/AdminLayout";
+import Login from "./login";
+import PageNotFound from "./page-not-found";
+import UserLayout from "@/layout/user-layout";
+import Unauthorized from "./unauthorized";
+import Homepage from "./home-page";
+import Signup from "./signup";
+import ProtectedRoute from "@/components/effect/protected-route";
+import Role from "@/entities/enums/role";
+import AdminLayout from "@/layout/admin-layout";
+import ChatPage from "./chat-page";
+import MailPage from "./mail-page";
 
 const routes = createBrowserRouter([
   {
@@ -26,6 +28,14 @@ const routes = createBrowserRouter([
       {
         path: "signup",
         element: <Signup />,
+      },
+      {
+        path: "messages",
+        element: <ChatPage />,
+      },
+      {
+        path: "test",
+        element: <MailPage />,
       },
       {
         path: "unauthorized",

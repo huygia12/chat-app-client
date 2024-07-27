@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import routes from "./routes";
-import { axiosInstance, reqConfig } from "@/utils/axiosConfig";
+import { axiosInstance, reqConfig } from "@/utils/axios-config";
 import axios, { HttpStatusCode } from "axios";
 import {
   Select,
@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Gender from "@/entities/enums/Gender";
+import Gender from "@/entities/enums/gender";
 
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -99,7 +99,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="w-full h-full grid grid-cols-2">
+    <div className="w-full h-full flex flex-col 2xl:grid 2xl:grid-cols-2">
       <form
         onSubmit={handleSubmit(handleSignupFormSubmission)}
         className="flex items-center justify-center my-10"
@@ -355,7 +355,7 @@ const Signup = () => {
           </div>
         </div>
       </form>
-      <div className="hidden bg-muted lg:block">
+      <div className="hidden bg-muted xl:block">
         <img
           src="/placeholder.svg"
           alt="Image"

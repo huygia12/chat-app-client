@@ -1,4 +1,4 @@
-import { useCurrUser } from "@/utils/customHook";
+import { useCurrUser } from "@/utils/custom-hook";
 import { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
@@ -11,7 +11,6 @@ const ProtectedRoute: React.FC<{
 
   return (
     <>
-      {console.log()}
       {currUser ? (
         !allowedRoles ? (
           children

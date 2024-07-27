@@ -1,4 +1,4 @@
-import ScrollToTop from "@/components/effect/ScrollToTop";
+import ScrollToTop from "@/components/effect/scroll-to-top";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "sonner";
 
