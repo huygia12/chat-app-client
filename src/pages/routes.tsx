@@ -8,13 +8,34 @@ import Signup from "./signup";
 import ProtectedRoute from "@/components/effect/protected-route";
 import Role from "@/entities/enums/role";
 import AdminLayout from "@/layout/admin-layout";
+import UserExistedCheck from "@/components/effect/user-existed-check";
 import ChatPage from "./chat-page";
-import MailPage from "./mail-page";
+import Playground from "./play-ground";
 
 const routes = createBrowserRouter([
   {
+    path: "login",
+    element: (
+      <UserExistedCheck>
+        <Login />
+      </UserExistedCheck>
+    ),
+  },
+  {
+    path: "signup",
+    element: (
+      <UserExistedCheck>
+        <Signup />
+      </UserExistedCheck>
+    ),
+  },
+  {
     path: "/",
-    element: <UserLayout />,
+    element: (
+      <ProtectedRoute allowedRoles={[Role.ADMIN, Role.USER]}>
+        <UserLayout />
+      </ProtectedRoute>
+    ),
     errorElement: <PageNotFound />,
     children: [
       {
@@ -22,20 +43,12 @@ const routes = createBrowserRouter([
         element: <Homepage />,
       },
       {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "signup",
-        element: <Signup />,
-      },
-      {
         path: "messages",
         element: <ChatPage />,
       },
       {
         path: "test",
-        element: <MailPage />,
+        element: <Playground />,
       },
       {
         path: "unauthorized",

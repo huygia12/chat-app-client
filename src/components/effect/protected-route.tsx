@@ -1,32 +1,42 @@
-import { useCurrUser } from "@/utils/custom-hook";
-import { ReactNode } from "react";
+import { UserDecoded } from "@/entities/user";
+import { useAuth } from "@/utils/custom-hook";
+import { Nullable } from "@/utils/declare";
+import { ReactNode, useMemo } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
 const ProtectedRoute: React.FC<{
   children: ReactNode;
   allowedRoles?: string[];
 }> = ({ children, allowedRoles }) => {
-  const { currUser } = useCurrUser();
+  const { getUserDecoded, token } = useAuth();
   const location = useLocation();
+
+  const userDecoded: Nullable<UserDecoded> = useMemo(
+    () => getUserDecoded(token),
+    [token, getUserDecoded]
+  );
 
   return (
     <>
-      {currUser ? (
+      {userDecoded ? (
         !allowedRoles ? (
           children
-        ) : allowedRoles.find((role) => role === currUser.role) ? (
+        ) : allowedRoles.find((role) => role === userDecoded.role) ? (
           children
         ) : (
           <Navigate
             to="/unauthorized"
-            state={{ from: location, unstable_useViewTransitionState: true }}
+            state={{
+              from: location.pathname,
+              unstable_useViewTransitionState: true,
+            }}
             replace={true}
           />
         )
       ) : (
         <Navigate
           to="/login"
-          state={{ from: location, unstable_useViewTransitionState: true }}
+          state={{ from: location.pathname }}
           replace={true}
         />
       )}

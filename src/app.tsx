@@ -1,14 +1,14 @@
 import { RouterProvider } from "react-router-dom";
 import routes from "./pages/routes";
 import { DarkModeProvider } from "./context/dark-mode-context";
-import { UserDecodedProvider } from "./context/user-context";
+import { AuthProvider } from "./context/auth-context";
 
 function App() {
   return (
     <DarkModeProvider>
-      <UserDecodedProvider>
+      <AuthProvider>
         <RouterProvider router={routes} />
-      </UserDecodedProvider>
+      </AuthProvider>
     </DarkModeProvider>
   );
 }

@@ -28,6 +28,7 @@ import { CalendarIcon, Eye, EyeOff } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
+import DarkModeToggle from "@/components/ui/dark-mode-toggle";
 
 const SignupSchema = z.object({
   userName: z.string().min(1, { message: "Name is required!" }),
@@ -43,7 +44,7 @@ const SignupSchema = z.object({
 
 type SignupForm = z.infer<typeof SignupSchema>;
 
-const Signup = () => {
+const Signup = (): JSX.Element => {
   const {
     register,
     handleSubmit,
@@ -99,7 +100,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col 2xl:grid 2xl:grid-cols-2">
+    <div className="w-full h-full flex flex-col 2xl:grid 2xl:grid-cols-2 dark:bg-bkg-2-dark">
+      <DarkModeToggle />
       <form
         onSubmit={handleSubmit(handleSignupFormSubmission)}
         className="flex items-center justify-center my-10"

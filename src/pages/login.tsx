@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { HttpStatusCode } from "axios";
@@ -9,7 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 import { ReactEventHandler, useState } from "react";
-import { useCurrUser } from "@/utils/custom-hook";
+import { useAuth } from "@/utils/custom-hook";
+import routes from "./routes";
+import Role from "@/entities/enums/role";
+import DarkModeToggle from "@/components/ui/dark-mode-toggle";
 
 const LoginSchema = z.object({
   email: z.string().email({ message: "Invalid Email!" }),
@@ -20,7 +23,7 @@ const LoginSchema = z.object({
 
 type LoginForm = z.infer<typeof LoginSchema>;
 
-const Login = () => {
+const Login = (): JSX.Element => {
   const {
     register,
     handleSubmit,
@@ -30,12 +33,13 @@ const Login = () => {
     resolver: zodResolver(LoginSchema),
   });
   const [passwordVisibility, setPasswordvisibility] = useState(false);
-  const { getUserDecoded, setToken } = useCurrUser();
+  const { getUserDecoded, setToken } = useAuth();
+  const location = useLocation();
 
   const handleLoginFormSubmission: SubmitHandler<LoginForm> = async (data) => {
     try {
       const res = await axiosInstance.post<{ access_token: string }>(
-        "http://localhost:8080/api/v1/auth/login",
+        `${import.meta.env.VITE_AUTHEN_URL}/login`,
         {
           payload: {
             user: {
@@ -48,15 +52,17 @@ const Login = () => {
       );
 
       setToken(res.data.access_token);
-      console.debug(JSON.stringify(getUserDecoded()));
-      // await routes.navigate(
-      //   "/messages",
-      //   // user.role === Role.ADMIN ? "/admin" : from === "/login" ? "/" : from,
-      //   {
-      //     unstable_viewTransition: true,
-      //     replace: true,
-      //   }
-      // );
+      const userDecoded = getUserDecoded(res.data.access_token);
+
+      if (!userDecoded) throw new Error(`UserDecoded is ${userDecoded}`);
+
+      await routes.navigate(
+        userDecoded.role === Role.ADMIN ? "/admin" : "/test",
+        {
+          replace: true,
+          state: { from: location.pathname },
+        }
+      );
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status == HttpStatusCode.Conflict) {
@@ -86,7 +92,6 @@ const Login = () => {
 
   const handleRefreshToken: ReactEventHandler = async (event) => {
     event.preventDefault();
-    console.debug("refresh");
     try {
       const res = await axiosInstance.get(
         "http://localhost:8010/api/v1/auth/refresh",
@@ -130,7 +135,8 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col 2xl:grid 2xl:grid-cols-2">
+    <div className="w-full h-full flex flex-col 2xl:grid 2xl:grid-cols-2 dark:bg-bkg-2-dark">
+      <DarkModeToggle />
       <form
         onSubmit={handleSubmit(handleLoginFormSubmission)}
         className="flex items-center justify-center my-10"

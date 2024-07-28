@@ -1,10 +1,19 @@
 import { useContext, useState } from "react";
-import UserDecodedContext, {
-  UserDecodedContextProps,
-} from "@/context/user-context";
 import DarkModeContext, {
   DarkModeContextValue,
 } from "@/context/dark-mode-context";
+import AuthContext from "@/context/auth-context";
+import Role from "@/entities/enums/role";
+import { JwtPayload, jwtDecode } from "jwt-decode";
+import { UserDecoded } from "@/entities/user";
+import { Nullable } from "./declare";
+
+interface TokenDecoded extends JwtPayload {
+  userId: number;
+  email: string;
+  username: string;
+  role: Role;
+}
 
 /**
  * A hook so that you can set,get,clear <key, value> in local storage
@@ -43,10 +52,13 @@ const useSession = <T>(key: string): [T, (value: T) => void, () => void] => {
  * @returns All state values and value modifiers.
  */
 const useLocalStorage = <T>(
-  key: string
+  key: string,
+  initValue: T
 ): [T, (value: T) => void, () => void] => {
   const [storedValue, setStoredValue] = useState<T>(() => {
     const prevValue = window.localStorage.getItem(key);
+
+    if (!prevValue) return initValue;
     return prevValue && JSON.parse(prevValue);
   });
 
@@ -71,15 +83,37 @@ const useLocalStorage = <T>(
 };
 
 /**
- * A hook so that you don't have to call `useContext(UserContext)` all the
+ * A hook so that you don't have to call `useContext(AuthContext)` all the
  * time.
- * @returns All state values from {@link UserProvider}.
+ * @returns All state values and value modifiers from {@link AuthProvider}.
  */
-const useCurrUser = (): UserDecodedContextProps => {
-  const { getUserDecoded, setToken, clearToken } =
-    useContext(UserDecodedContext);
+const useAuth = () => {
+  const { token, setToken, clearToken } = useContext(AuthContext);
 
-  return { getUserDecoded, setToken, clearToken };
+  const getUserDecoded = (
+    newToken: Nullable<string> = token
+  ): Nullable<UserDecoded> => {
+    try {
+      if (!newToken) return null;
+
+      const tokenDecoded = jwtDecode<TokenDecoded>(newToken);
+      if (!tokenDecoded.sub) return null;
+
+      const userDecoded: UserDecoded = {
+        userId: tokenDecoded.sub,
+        username: tokenDecoded.username,
+        role: tokenDecoded.role,
+        email: tokenDecoded.email,
+      };
+
+      return userDecoded;
+    } catch {
+      console.debug("Invalid token!");
+      return null;
+    }
+  };
+
+  return { getUserDecoded, token, setToken, clearToken };
 };
 
 /**
@@ -98,4 +132,4 @@ const useDarkMode = (): DarkModeContextValue => {
   return context;
 };
 
-export { useLocalStorage, useSession, useCurrUser, useDarkMode };
+export { useLocalStorage, useSession, useAuth, useDarkMode };
