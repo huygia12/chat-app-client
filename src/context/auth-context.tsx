@@ -1,24 +1,39 @@
 import { useSession } from "@/utils/custom-hook";
-import { Context, ReactNode, createContext } from "react";
+import { ReactNode, createContext, useEffect, useRef } from "react";
 import { Nullable } from "@/utils/declare";
+import { refreshToken } from "@/apis/auth";
 
 interface AuthContextProps {
-  token: Nullable<string>;
-  setToken: (token: string) => void;
-  clearToken: () => void;
+  accessToken: Nullable<string>;
+  setAccessToken: (token: string) => void;
+  clearAccessToken: () => void;
 }
 
-const AuthContext: Context<AuthContextProps> = createContext({
-  token: null,
-  setToken: () => {},
-  clearToken: () => {},
-} as AuthContextProps);
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [token, setToken, clearToken] = useSession<string>("access_token");
+  const [accessToken, setAccessToken, clearAccessToken] =
+    useSession<string>("access_token");
+  const hasFetched = useRef(false);
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const newAccessToken: Nullable<string> = await refreshToken();
+      console.debug("AUTH CONTEXT: new access token:", newAccessToken);
+
+      if (newAccessToken) {
+        setAccessToken(newAccessToken);
+      }
+    };
+
+    if (!hasFetched.current) initializeAuth();
+    hasFetched.current = true;
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ token, setToken, clearToken }}>
+    <AuthContext.Provider
+      value={{ accessToken, setAccessToken, clearAccessToken }}
+    >
       {children}
     </AuthContext.Provider>
   );

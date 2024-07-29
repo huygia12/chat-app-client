@@ -88,10 +88,15 @@ const useLocalStorage = <T>(
  * @returns All state values and value modifiers from {@link AuthProvider}.
  */
 const useAuth = () => {
-  const { token, setToken, clearToken } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
+  if (!authContext) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+
+  const { accessToken, setAccessToken, clearAccessToken } = authContext;
 
   const getUserDecoded = (
-    newToken: Nullable<string> = token
+    newToken: Nullable<string> = accessToken
   ): Nullable<UserDecoded> => {
     try {
       if (!newToken) return null;
@@ -113,7 +118,7 @@ const useAuth = () => {
     }
   };
 
-  return { getUserDecoded, token, setToken, clearToken };
+  return { getUserDecoded, accessToken, setAccessToken, clearAccessToken };
 };
 
 /**
@@ -125,7 +130,7 @@ const useAuth = () => {
 const useDarkMode = (): DarkModeContextValue => {
   const context = useContext(DarkModeContext);
 
-  if (context === undefined || context === null) {
+  if (!context) {
     throw new Error("DarkModeContext was used outside of DarkModeProvider");
   }
 

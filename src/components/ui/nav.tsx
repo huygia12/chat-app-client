@@ -20,10 +20,10 @@ const Nav: FC<NavProps> = ({ ...props }) => {
       <nav className="flex flex-col gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
         {props.links.map((link, index) =>
           props.isCollapsed ? (
-            <Tooltip key={index} delayDuration={0}>
+            <Tooltip key={index}>
               <TooltipTrigger asChild>
                 <NavLink
-                  to="#"
+                  to={link.url}
                   className={cn(
                     buttonVariants({ variant: link.variant }),
                     // link.variant === "primary" &&
@@ -49,7 +49,7 @@ const Nav: FC<NavProps> = ({ ...props }) => {
           ) : (
             <NavLink
               key={index}
-              to="#"
+              to={link.url}
               className={cn(
                 buttonVariants({ variant: link.variant }),
                 "flex p-4 items-center text-h3 font-normal justify-start",

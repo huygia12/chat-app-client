@@ -18,6 +18,7 @@ interface ClientToServerEvents {
 interface MainNavItem {
   title: string;
   label?: string;
+  url: string;
   icon: LucideIcon;
   variant: "primary" | "ghost";
 }

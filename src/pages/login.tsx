@@ -1,6 +1,5 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { NavLink, useLocation } from "react-router-dom";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { HttpStatusCode } from "axios";
 import { axiosInstance, reqConfig } from "@/utils/axios-config";
@@ -8,56 +7,39 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
-import { ReactEventHandler, useState } from "react";
+import { FC, ReactElement, ReactEventHandler, useState } from "react";
 import { useAuth } from "@/utils/custom-hook";
 import routes from "./routes";
 import Role from "@/entities/enums/role";
 import DarkModeToggle from "@/components/ui/dark-mode-toggle";
+import { login } from "@/apis/auth";
+import LoginSchema, { LoginFormProps } from "@/schema/login-form-schema";
 
-const LoginSchema = z.object({
-  email: z.string().email({ message: "Invalid Email!" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must contain at least 8 character!" }),
-});
-
-type LoginForm = z.infer<typeof LoginSchema>;
-
-const Login = (): JSX.Element => {
+const Login: FC = (): ReactElement => {
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm<LoginForm>({
+  } = useForm<LoginFormProps>({
     resolver: zodResolver(LoginSchema),
   });
   const [passwordVisibility, setPasswordvisibility] = useState(false);
-  const { getUserDecoded, setToken } = useAuth();
+  const { getUserDecoded, setAccessToken } = useAuth();
   const location = useLocation();
 
-  const handleLoginFormSubmission: SubmitHandler<LoginForm> = async (data) => {
+  const handleLoginFormSubmission: SubmitHandler<LoginFormProps> = async (
+    data
+  ) => {
     try {
-      const res = await axiosInstance.post<{ access_token: string }>(
-        `${import.meta.env.VITE_AUTHEN_URL}/login`,
-        {
-          payload: {
-            user: {
-              email: data.email.trim(),
-              password: data.password.trim(),
-            },
-          },
-        },
-        reqConfig
-      );
+      const res = await login(data);
+      setAccessToken(res.data.access_token);
 
-      setToken(res.data.access_token);
       const userDecoded = getUserDecoded(res.data.access_token);
-
       if (!userDecoded) throw new Error(`UserDecoded is ${userDecoded}`);
 
       await routes.navigate(
-        userDecoded.role === Role.ADMIN ? "/admin" : "/test",
+        userDecoded.role === Role.ADMIN ? "/admin" : "/messages",
         {
           replace: true,
           state: { from: location.pathname },
@@ -94,31 +76,12 @@ const Login = (): JSX.Element => {
     event.preventDefault();
     try {
       const res = await axiosInstance.get(
-        "http://localhost:8010/api/v1/auth/refresh",
+        `${import.meta.env.VITE_AUTHEN_URL}/refresh`,
         reqConfig
       );
-
       console.debug(JSON.stringify(res));
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status == HttpStatusCode.Conflict) {
-          setError("root", {
-            message: "Please logout your current account!",
-          });
-        } else if (error.response?.status == HttpStatusCode.BadRequest) {
-          setError("root", {
-            message: "Account none exist!",
-          });
-        } else if (error.response?.status == HttpStatusCode.Unauthorized) {
-          setError("password", {
-            message: "Wrong password!",
-          });
-        } else {
-          setError("root", {
-            message: "This account currently cannot login!",
-          });
-        }
-        // Handle error response if available
         console.error(`Error response: ${JSON.stringify(error.response)}`);
       } else {
         console.error("Unexpected error:", error);

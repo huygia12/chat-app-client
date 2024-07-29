@@ -8,12 +8,12 @@ const ProtectedRoute: React.FC<{
   children: ReactNode;
   allowedRoles?: string[];
 }> = ({ children, allowedRoles }) => {
-  const { getUserDecoded, token } = useAuth();
+  const { getUserDecoded, accessToken } = useAuth();
   const location = useLocation();
 
   const userDecoded: Nullable<UserDecoded> = useMemo(
-    () => getUserDecoded(token),
-    [token, getUserDecoded]
+    () => getUserDecoded(accessToken),
+    [accessToken, getUserDecoded]
   );
 
   return (
