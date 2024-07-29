@@ -1,3 +1,4 @@
+import Role from "@/entities/enums/role";
 import { UserDecoded } from "@/entities/user";
 import { useAuth } from "@/utils/custom-hook";
 import { Nullable } from "@/utils/declare";
@@ -6,7 +7,7 @@ import { Navigate, useLocation } from "react-router-dom";
 
 const ProtectedRoute: React.FC<{
   children: ReactNode;
-  allowedRoles?: string[];
+  allowedRoles?: Role[];
 }> = ({ children, allowedRoles }) => {
   const { getUserDecoded, accessToken } = useAuth();
   const location = useLocation();

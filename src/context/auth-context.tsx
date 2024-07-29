@@ -19,7 +19,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       const newAccessToken: Nullable<string> = await refreshToken();
-      console.debug("AUTH CONTEXT: new access token:", newAccessToken);
 
       if (newAccessToken) {
         setAccessToken(newAccessToken);
@@ -28,7 +27,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
     if (!hasFetched.current) initializeAuth();
     hasFetched.current = true;
-  }, []);
+  }, [setAccessToken]);
 
   return (
     <AuthContext.Provider

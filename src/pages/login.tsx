@@ -36,6 +36,7 @@ const Login: FC = (): ReactElement => {
       setAccessToken(res.data.access_token);
 
       const userDecoded = getUserDecoded(res.data.access_token);
+
       if (!userDecoded) throw new Error(`UserDecoded is ${userDecoded}`);
 
       await routes.navigate(
@@ -125,7 +126,7 @@ const Login: FC = (): ReactElement => {
                 {...register("email")}
                 id="email"
                 type="email"
-                defaultValue={"hung@gmail.com"}
+                defaultValue={"toan@gmail.com"}
                 placeholder="abc@example.com"
                 size={40}
                 onKeyDown={(e) => handleEnterKeyEvent(e)}
@@ -153,7 +154,7 @@ const Login: FC = (): ReactElement => {
               <div className="relative">
                 <Input
                   {...register("password")}
-                  defaultValue={"123456a@"}
+                  defaultValue={"12345678"}
                   id="password"
                   type={passwordVisibility ? "text" : "password"}
                   size={40}
