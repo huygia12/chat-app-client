@@ -5,6 +5,7 @@ import { Outlet } from "react-router-dom";
 import { Toaster } from "sonner";
 import {
   House,
+  LogOut,
   MessageCircleMore,
   MessagesSquare,
   UserRoundPen,
@@ -21,48 +22,53 @@ import { MainNavItem } from "@/utils/declare";
 import { cn } from "@/lib/utils";
 import Nav from "@/components/ui/nav";
 
-const chatFunctionItems: MainNavItem[] = [
+const chatNavItems: MainNavItem[] = [
   {
     title: "Inbox",
     label: "12",
     url: "/messages",
     icon: MessagesSquare,
-    variant: "primary",
   },
   {
     title: "Online Friends",
     label: "9",
-    url: "#",
+    url: "/friends",
     icon: Users2,
-    variant: "ghost",
   },
   {
     title: "Waiting",
     label: "0",
     url: "/test",
     icon: MessageCircleMore,
-    variant: "ghost",
   },
 ];
 
-const otherFunctionItems: MainNavItem[] = [
+const otherNavItems: MainNavItem[] = [
   {
     title: "Home Page",
     icon: House,
-    url: "#",
-    variant: "ghost",
+    url: "/",
   },
   {
     title: "My Profile",
     icon: UserRoundPen,
-    url: "#",
-    variant: "ghost",
+    url: "/:id",
+  },
+];
+
+const bottomNavItems: MainNavItem[] = [
+  {
+    title: "Logout",
+    icon: LogOut,
+    url: "/logout",
   },
 ];
 
 const UserLayout: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
-  // const [selectedNavItem, setSelected] = useState();
+  const [selectedNavItem, setSelectedNavItem] = useState<string>(
+    chatNavItems[0].url
+  );
 
   return (
     <>
@@ -88,12 +94,34 @@ const UserLayout: React.FC = () => {
               onExpand={() => isCollapsed && setIsCollapsed(!isCollapsed)}
               onCollapse={() => isCollapsed || setIsCollapsed(!isCollapsed)}
               className={cn(
+                "!max-h-[100vh]",
                 isCollapsed && "transition-all duration-300 ease-in-out"
               )}
             >
-              <Nav isCollapsed={isCollapsed} links={chatFunctionItems} />
+              <Nav
+                selectedUrl={selectedNavItem}
+                setSelectedUrl={setSelectedNavItem}
+                isCollapsed={isCollapsed}
+                navItems={chatNavItems}
+              />
               <Separator className="mt-10" />
-              <Nav isCollapsed={isCollapsed} links={otherFunctionItems} />
+              <Nav
+                selectedUrl={selectedNavItem}
+                setSelectedUrl={setSelectedNavItem}
+                isCollapsed={isCollapsed}
+                navItems={otherNavItems}
+              />
+              <div className="flex flex-col h-full">
+                <div className="mt-auto mb-[20rem]">
+                  <Separator className="" />
+                  <Nav
+                    selectedUrl={selectedNavItem}
+                    setSelectedUrl={setSelectedNavItem}
+                    isCollapsed={isCollapsed}
+                    navItems={bottomNavItems}
+                  />
+                </div>
+              </div>
             </ResizablePanel>
             <ResizableHandle withHandle />
 

@@ -1,11 +1,13 @@
 import { Nullable } from "@/utils/declare";
 import { axiosInstance, reqConfig } from "@/utils/axios-config";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { LoginFormProps } from "@/schema/login-form-schema";
 
-const refreshToken = async (): Promise<Nullable<string>> => {
+const refreshToken = async (
+  instance: AxiosInstance = axiosInstance
+): Promise<Nullable<string>> => {
   try {
-    const res = await axiosInstance.get<{ access_token: string }>(
+    const res = await instance.get<{ access_token: string }>(
       `${import.meta.env.VITE_AUTHEN_URL}/refresh`,
       reqConfig
     );

@@ -11,37 +11,46 @@ import { MainNavItem } from "@/utils/declare";
 
 interface NavProps extends HTMLAttributes<HTMLDivElement> {
   isCollapsed: boolean;
-  links: MainNavItem[];
+  selectedUrl: string;
+  setSelectedUrl: (navItemUrl: string) => void;
+  navItems: MainNavItem[];
 }
 
-const Nav: FC<NavProps> = ({ ...props }) => {
+const Nav: FC<NavProps> = ({ className, ...props }) => {
   return (
-    <div data-collapsed={props.isCollapsed} className="group p-2">
+    <div
+      data-collapsed={props.isCollapsed}
+      className={cn("group p-2", className)}
+    >
       <nav className="flex flex-col gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-        {props.links.map((link, index) =>
+        {props.navItems.map((item, index) =>
           props.isCollapsed ? (
             <Tooltip key={index}>
               <TooltipTrigger asChild>
                 <NavLink
-                  to={link.url}
+                  to={item.url}
+                  onClick={() => props.setSelectedUrl(item.url)}
                   className={cn(
-                    buttonVariants({ variant: link.variant }),
+                    buttonVariants({
+                      variant:
+                        item.url === props.selectedUrl ? "primary" : "ghost",
+                    }),
                     // link.variant === "primary" &&
                     //   "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white",
                     "py-6"
                   )}
                 >
                   <span>
-                    <link.icon size={24} />
+                    <item.icon size={24} />
                   </span>
-                  <span className="sr-only">{link.title}</span>
+                  <span className="sr-only">{item.title}</span>
                 </NavLink>
               </TooltipTrigger>
               <TooltipContent side="right" className="flex items-center gap-4">
-                {link.title}
-                {link.label && (
+                {item.title}
+                {item.label && (
                   <span className="ml-auto text-muted-foreground">
-                    {link.label}
+                    {item.label}
                   </span>
                 )}
               </TooltipContent>
@@ -49,21 +58,24 @@ const Nav: FC<NavProps> = ({ ...props }) => {
           ) : (
             <NavLink
               key={index}
-              to={link.url}
+              to={item.url}
+              onClick={() => props.setSelectedUrl(item.url)}
               className={cn(
-                buttonVariants({ variant: link.variant }),
-                "flex p-4 items-center text-h3 font-normal justify-start",
-                link.variant === "primary" &&
-                  "text-white dark:bg-muted dark:hover:bg-muted dark:hover:text-white"
+                buttonVariants({
+                  variant: item.url === props.selectedUrl ? "primary" : "ghost",
+                }),
+                "flex p-4 items-center text-h3 font-normal justify-start"
+                // item.variant === "primary" &&
+                //   "text-white dark:bg-muted dark:hover:bg-muted dark:hover:text-white"
               )}
             >
               <span className="mr-2">
-                <link.icon size={24} />
+                <item.icon size={24} />
               </span>
               <span className="overflow-hidden text-ellipsis mr-4">
-                {link.title}
+                {item.title}
               </span>
-              {link.label && (
+              {item.label && (
                 <span
                   className={cn(
                     "ml-auto"
@@ -71,7 +83,7 @@ const Nav: FC<NavProps> = ({ ...props }) => {
                     //   "text-background dark:text-white"
                   )}
                 >
-                  {link.label}
+                  {item.label}
                 </span>
               )}
             </NavLink>

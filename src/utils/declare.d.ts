@@ -20,7 +20,7 @@ interface MainNavItem {
   label?: string;
   url: string;
   icon: LucideIcon;
-  variant: "primary" | "ghost";
+  action?: (...agrs) => void;
 }
 
 export type {
