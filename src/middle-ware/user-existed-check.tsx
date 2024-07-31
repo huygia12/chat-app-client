@@ -1,4 +1,4 @@
-import { useAuth } from "@/utils/custom-hook";
+import { useAuth } from "@/hooks";
 import React, { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 

@@ -1,17 +1,17 @@
-import { refreshToken } from "@/apis/auth";
+import { refreshToken } from "@/services/apis/auth";
+import { Nullable } from "@/utils/declare";
 import axios, { AxiosRequestConfig } from "axios";
 import { fromUnixTime, isAfter } from "date-fns";
 import { InvalidTokenError, jwtDecode } from "jwt-decode";
-import { Nullable } from "./declare";
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
   timeout: 100000, // 10 seconds
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-const reqConfig: AxiosRequestConfig = {
+export const reqConfig: AxiosRequestConfig = {
   withCredentials: true, // Include credentials in requests
 };
 
@@ -41,5 +41,3 @@ axiosInstance.interceptors.request.use(async (config) => {
 
   return config;
 });
-
-export { axiosInstance, reqConfig };

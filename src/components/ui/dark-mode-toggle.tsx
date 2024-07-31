@@ -1,8 +1,8 @@
-import { useDarkMode } from "@/utils/custom-hook";
 import IconButton from "./icon-button";
 import { LucideIcon, MoonIcon, SunIcon } from "lucide-react";
 import Draggable from "react-draggable";
 import { FC, HTMLAttributes, useRef } from "react";
+import { useDarkMode } from "@/hooks";
 
 const DarkModeToggle: FC<HTMLAttributes<HTMLButtonElement>> = () => {
   const context = useDarkMode();

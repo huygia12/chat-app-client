@@ -2,17 +2,17 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { NavLink, useLocation } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { HttpStatusCode } from "axios";
-import { axiosInstance, reqConfig } from "@/utils/axios-config";
+import { axiosInstance, reqConfig } from "@/services/axios";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 import { FC, ReactElement, ReactEventHandler, useState } from "react";
-import { useAuth } from "@/utils/custom-hook";
+import { useAuth } from "@/hooks";
 import routes from "./routes";
-import Role from "@/entities/enums/role";
+import Role from "@/types/enums/role";
 import DarkModeToggle from "@/components/ui/dark-mode-toggle";
-import { login } from "@/apis/auth";
+import { login } from "@/services/apis/auth";
 import LoginSchema, { LoginFormProps } from "@/schema/login-form-schema";
 
 const Login: FC = (): ReactElement => {
@@ -77,7 +77,7 @@ const Login: FC = (): ReactElement => {
     event.preventDefault();
     try {
       const res = await axiosInstance.get(
-        `${import.meta.env.VITE_AUTHEN_URL}/refresh`,
+        `${import.meta.env.VITE_AUTH_URL}/refresh`,
         reqConfig
       );
       console.debug(JSON.stringify(res));

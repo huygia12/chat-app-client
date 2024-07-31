@@ -4,7 +4,7 @@ import {
   ClientToServerEvents,
   Message,
   ServerToClientEvents,
-} from "@/utils/declare";
+} from "@/types/api";
 import { FormEvent, useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
 

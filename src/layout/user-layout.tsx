@@ -1,4 +1,4 @@
-import ScrollToTop from "@/components/effect/scroll-to-top";
+import { ScrollToTop } from "@/components/effect";
 import DarkModeToggle from "@/components/ui/dark-mode-toggle";
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
@@ -18,12 +18,12 @@ import {
 } from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { MainNavItem } from "@/utils/declare";
 import { cn } from "@/lib/utils";
 import Nav from "@/components/ui/nav";
-import { logout } from "@/apis/auth";
+import { logout } from "@/services/apis/auth";
 import routes from "@/pages/routes";
 import { HttpStatusCode } from "axios";
+import { MainNavItem } from "@/types/component";
 
 const chatNavItems: MainNavItem[] = [
   {

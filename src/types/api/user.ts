@@ -1,8 +1,7 @@
-import Gender from "./enums/gender";
-import Role from "./enums/role";
+import { Gender, Role } from "../enums";
 
 interface User {
-  userId: string;
+  userId: bigint;
   email: string;
   username: string;
   firstName: string;
@@ -20,7 +19,7 @@ interface User {
 }
 
 interface UserDecoded {
-  userId: string;
+  userId: bigint;
   email: string;
   username: string;
   role: Role;

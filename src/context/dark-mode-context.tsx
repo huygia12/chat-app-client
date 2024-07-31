@@ -1,4 +1,4 @@
-import { useLocalStorage } from "@/utils/custom-hook";
+import { useLocalStorage } from "@/hooks";
 import { Nullable } from "@/utils/declare";
 import { Context, ReactNode, createContext, useEffect } from "react";
 

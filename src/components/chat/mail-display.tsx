@@ -41,7 +41,7 @@ interface MailDisplayProps {
   mail: Mail | null;
 }
 
-export function MailDisplay({ mail }: MailDisplayProps) {
+export default function MailDisplay({ mail }: MailDisplayProps) {
   const today = new Date();
 
   return (

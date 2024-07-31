@@ -7,7 +7,7 @@ import {
 import { NavLink } from "react-router-dom";
 import { buttonVariants } from "@/utils/constants";
 import { FC, HTMLAttributes } from "react";
-import { MainNavItem } from "@/utils/declare";
+import { MainNavItem } from "@/types/component";
 
 interface NavProps extends HTMLAttributes<HTMLDivElement> {
   isCollapsed: boolean;

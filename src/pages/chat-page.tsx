@@ -7,11 +7,11 @@ import {
 } from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMail } from "../components/ui/chat/use-mail";
-import MailList from "../components/ui/chat/mail-list";
-import { MailDisplay } from "../components/ui/chat/mail-display";
+import { useMail } from "../hooks";
+import MailList from "../components/chat/mail-list";
+import { MailDisplay } from "../components/chat";
 import { HTMLAttributes, FC } from "react";
-import { mails } from "@/components/ui/chat/data";
+import { mails } from "@/components/chat/data";
 
 const ChatPage: FC<HTMLAttributes<HTMLDivElement>> = () => {
   const [mail] = useMail();

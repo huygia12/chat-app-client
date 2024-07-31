@@ -5,10 +5,9 @@ import UserLayout from "@/layout/user-layout";
 import Unauthorized from "./unauthorized";
 import Homepage from "./home-page";
 import Signup from "./signup";
-import ProtectedRoute from "@/components/effect/protected-route";
-import Role from "@/entities/enums/role";
+import { ProtectedRoute, UserExistedCheck } from "@/middle-ware";
+import Role from "@/types/enums/role";
 import AdminLayout from "@/layout/admin-layout";
-import UserExistedCheck from "@/components/effect/user-existed-check";
 import ChatPage from "./chat-page";
 import Playground from "./play-ground";
 

@@ -6,7 +6,7 @@ import { NavLink } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import routes from "./routes";
-import { axiosInstance, reqConfig } from "@/utils/axios-config";
+import { axiosInstance, reqConfig } from "@/services/axios";
 import axios, { HttpStatusCode } from "axios";
 import {
   Select,
@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Gender from "@/entities/enums/gender";
+import Gender from "@/types/enums/gender";
 
 import { Calendar } from "@/components/ui/calendar";
 import {

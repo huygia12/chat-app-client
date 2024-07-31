@@ -1,7 +1,7 @@
-import { useSession } from "@/utils/custom-hook";
+import { useSession } from "@/hooks";
 import { ReactNode, createContext, useEffect, useRef } from "react";
 import { Nullable } from "@/utils/declare";
-import { refreshToken } from "@/apis/auth";
+import { refreshToken } from "@/services/apis/auth";
 
 interface AuthContextProps {
   accessToken: Nullable<string>;

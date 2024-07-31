@@ -3,9 +3,9 @@ import { ComponentProps, FC, HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useMail } from "./use-mail";
 import { Mail } from "./data";
 import { formatDistanceToNow } from "date-fns";
+import { useMail } from "@/hooks";
 
 interface MailListProps extends HTMLAttributes<HTMLDivElement> {
   items: Mail[];

@@ -1,6 +1,6 @@
-import Role from "@/entities/enums/role";
-import { UserDecoded } from "@/entities/user";
-import { useAuth } from "@/utils/custom-hook";
+import Role from "@/types/enums/role";
+import { UserDecoded } from "@/types/api";
+import { useAuth } from "@/hooks";
 import { Nullable } from "@/utils/declare";
 import { ReactNode, useMemo } from "react";
 import { Navigate, useLocation } from "react-router-dom";
@@ -9,12 +9,12 @@ const ProtectedRoute: React.FC<{
   children: ReactNode;
   allowedRoles?: Role[];
 }> = ({ children, allowedRoles }) => {
-  const { getUserDecoded, accessToken } = useAuth();
+  const { getUserDecoded } = useAuth();
   const location = useLocation();
 
   const userDecoded: Nullable<UserDecoded> = useMemo(
     () => getUserDecoded(),
-    [accessToken, getUserDecoded]
+    [getUserDecoded]
   );
 
   return (
