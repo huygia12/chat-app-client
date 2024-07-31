@@ -96,7 +96,7 @@ const useAuth = () => {
   const { accessToken, setAccessToken, clearAccessToken } = authContext;
 
   const getUserDecoded = (
-    newToken: Nullable<string> = accessToken
+    newToken: Nullable<string> = window.sessionStorage.getItem("access_token")
   ): Nullable<UserDecoded> => {
     try {
       if (!newToken) return null;

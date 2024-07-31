@@ -1,13 +1,11 @@
 import { Nullable } from "@/utils/declare";
-import { axiosInstance, reqConfig } from "@/utils/axios-config";
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import { reqConfig } from "@/utils/axios-config";
+import axios, { AxiosResponse } from "axios";
 import { LoginFormProps } from "@/schema/login-form-schema";
 
-const refreshToken = async (
-  instance: AxiosInstance = axiosInstance
-): Promise<Nullable<string>> => {
+const refreshToken = async (): Promise<Nullable<string>> => {
   try {
-    const res = await instance.get<{ access_token: string }>(
+    const res = await axios.get<{ access_token: string }>(
       `${import.meta.env.VITE_AUTHEN_URL}/refresh`,
       reqConfig
     );
@@ -32,7 +30,7 @@ const login = async (
     access_token: string;
   }>
 > => {
-  const res = await axiosInstance.post<{ access_token: string }>(
+  const res = await axios.post<{ access_token: string }>(
     `${import.meta.env.VITE_AUTHEN_URL}/login`,
     {
       payload: {
@@ -48,4 +46,13 @@ const login = async (
   return res;
 };
 
-export { refreshToken, login };
+const logout = async (): Promise<AxiosResponse> => {
+  const res = await axios.get(
+    `${import.meta.env.VITE_AUTHEN_URL}/logout`,
+    reqConfig
+  );
+
+  return res;
+};
+
+export { refreshToken, login, logout };

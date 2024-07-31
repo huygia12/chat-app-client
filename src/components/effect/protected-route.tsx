@@ -13,7 +13,7 @@ const ProtectedRoute: React.FC<{
   const location = useLocation();
 
   const userDecoded: Nullable<UserDecoded> = useMemo(
-    () => getUserDecoded(accessToken),
+    () => getUserDecoded(),
     [accessToken, getUserDecoded]
   );
 

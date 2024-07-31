@@ -11,13 +11,6 @@ const axiosInstance = axios.create({
   },
 });
 
-const axiosInstanceBackUp = axios.create({
-  timeout: 50000, // 10 seconds
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
 const reqConfig: AxiosRequestConfig = {
   withCredentials: true, // Include credentials in requests
 };
@@ -30,8 +23,7 @@ axiosInstance.interceptors.request.use(async (config) => {
 
       //If access token is expired
       if (!isAfter(fromUnixTime(tokenDecoded.exp), Date.now())) {
-        const newAccessToken: Nullable<string> =
-          await refreshToken(axiosInstanceBackUp);
+        const newAccessToken: Nullable<string> = await refreshToken();
 
         if (newAccessToken) {
           window.sessionStorage.setItem("access_token", newAccessToken);

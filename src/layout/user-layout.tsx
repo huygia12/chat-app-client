@@ -21,6 +21,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { MainNavItem } from "@/utils/declare";
 import { cn } from "@/lib/utils";
 import Nav from "@/components/ui/nav";
+import { logout } from "@/apis/auth";
+import routes from "@/pages/routes";
 
 const chatNavItems: MainNavItem[] = [
   {
@@ -60,7 +62,14 @@ const bottomNavItems: MainNavItem[] = [
   {
     title: "Logout",
     icon: LogOut,
-    url: "/logout",
+    url: "#",
+    action: async () => {
+      await logout();
+      window.sessionStorage.clear();
+      await routes.navigate("/login", {
+        replace: true,
+      });
+    },
   },
 ];
 
@@ -100,14 +109,14 @@ const UserLayout: React.FC = () => {
             >
               <Nav
                 selectedUrl={selectedNavItem}
-                setSelectedUrl={setSelectedNavItem}
+                setSelectedItem={setSelectedNavItem}
                 isCollapsed={isCollapsed}
                 navItems={chatNavItems}
               />
               <Separator className="mt-10" />
               <Nav
                 selectedUrl={selectedNavItem}
-                setSelectedUrl={setSelectedNavItem}
+                setSelectedItem={setSelectedNavItem}
                 isCollapsed={isCollapsed}
                 navItems={otherNavItems}
               />
@@ -116,7 +125,7 @@ const UserLayout: React.FC = () => {
                   <Separator className="" />
                   <Nav
                     selectedUrl={selectedNavItem}
-                    setSelectedUrl={setSelectedNavItem}
+                    setSelectedItem={setSelectedNavItem}
                     isCollapsed={isCollapsed}
                     navItems={bottomNavItems}
                   />

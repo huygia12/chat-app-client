@@ -3,15 +3,11 @@ import React, { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 
 const UserExistedCheck: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { getUserDecoded, accessToken } = useAuth();
+  const { getUserDecoded } = useAuth();
 
   return (
     <>
-      {getUserDecoded(accessToken) ? (
-        <Navigate to="/messages" replace={true} />
-      ) : (
-        children
-      )}
+      {getUserDecoded() ? <Navigate to="/messages" replace={true} /> : children}
     </>
   );
 };

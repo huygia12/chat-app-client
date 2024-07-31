@@ -12,7 +12,7 @@ import { MainNavItem } from "@/utils/declare";
 interface NavProps extends HTMLAttributes<HTMLDivElement> {
   isCollapsed: boolean;
   selectedUrl: string;
-  setSelectedUrl: (navItemUrl: string) => void;
+  setSelectedItem: (navItem: string) => void;
   navItems: MainNavItem[];
 }
 
@@ -29,7 +29,10 @@ const Nav: FC<NavProps> = ({ className, ...props }) => {
               <TooltipTrigger asChild>
                 <NavLink
                   to={item.url}
-                  onClick={() => props.setSelectedUrl(item.url)}
+                  onClick={async () => {
+                    item.action && (await item.action());
+                    props.setSelectedItem(item.title);
+                  }}
                   className={cn(
                     buttonVariants({
                       variant:
@@ -59,7 +62,10 @@ const Nav: FC<NavProps> = ({ className, ...props }) => {
             <NavLink
               key={index}
               to={item.url}
-              onClick={() => props.setSelectedUrl(item.url)}
+              onClick={async () => {
+                item.action && (await item.action());
+                props.setSelectedItem(item.title);
+              }}
               className={cn(
                 buttonVariants({
                   variant: item.url === props.selectedUrl ? "primary" : "ghost",
