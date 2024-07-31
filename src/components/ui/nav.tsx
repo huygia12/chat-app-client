@@ -28,7 +28,7 @@ const Nav: FC<NavProps> = ({ className, ...props }) => {
             <Tooltip key={index}>
               <TooltipTrigger asChild>
                 <NavLink
-                  to={item.url}
+                  to={item.url ?? "#"}
                   onClick={async () => {
                     item.action && (await item.action());
                     props.setSelectedItem(item.title);
@@ -61,7 +61,7 @@ const Nav: FC<NavProps> = ({ className, ...props }) => {
           ) : (
             <NavLink
               key={index}
-              to={item.url}
+              to={item.url ?? "#"}
               onClick={async () => {
                 item.action && (await item.action());
                 props.setSelectedItem(item.title);

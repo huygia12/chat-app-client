@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import Nav from "@/components/ui/nav";
 import { logout } from "@/apis/auth";
 import routes from "@/pages/routes";
+import { HttpStatusCode } from "axios";
 
 const chatNavItems: MainNavItem[] = [
   {
@@ -62,13 +63,14 @@ const bottomNavItems: MainNavItem[] = [
   {
     title: "Logout",
     icon: LogOut,
-    url: "#",
     action: async () => {
-      await logout();
-      window.sessionStorage.clear();
-      await routes.navigate("/login", {
-        replace: true,
-      });
+      const res = await logout();
+      if (res.status === HttpStatusCode.Ok) {
+        window.sessionStorage.clear();
+        await routes.navigate("/login", {
+          replace: true,
+        });
+      }
     },
   },
 ];
@@ -76,7 +78,7 @@ const bottomNavItems: MainNavItem[] = [
 const UserLayout: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [selectedNavItem, setSelectedNavItem] = useState<string>(
-    chatNavItems[0].url
+    chatNavItems[0].title
   );
 
   return (

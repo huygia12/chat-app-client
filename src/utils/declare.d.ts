@@ -18,7 +18,7 @@ interface ClientToServerEvents {
 interface MainNavItem {
   title: string;
   label?: string;
-  url: string;
+  url?: string;
   icon: LucideIcon;
   action?: (...agrs) => void | Promise<void>;
 }
