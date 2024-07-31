@@ -5,13 +5,18 @@ import path from "path";
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
   // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
-  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+  const envDir: string =
+    mode === "production"
+      ? "environments/production"
+      : "environments/development";
+
+  process.env = { ...process.env, ...loadEnv(mode, envDir) };
 
   // Load port from file .env.*
   const portInEnv: number = parseInt(process.env.VITE_PORT ?? "8000");
-
   return {
     // vite config
+    envDir: envDir,
     plugins: [react()],
     resolve: {
       alias: {

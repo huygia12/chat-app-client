@@ -5,7 +5,7 @@ import UserLayout from "@/layout/user-layout";
 import Unauthorized from "./unauthorized";
 import Homepage from "./home-page";
 import Signup from "./signup";
-import { ProtectedRoute, UserExistedCheck } from "@/middle-ware";
+import { ProtectedRoute, UserExistedCheck } from "@/middleware";
 import Role from "@/types/enums/role";
 import AdminLayout from "@/layout/admin-layout";
 import ChatPage from "./chat-page";

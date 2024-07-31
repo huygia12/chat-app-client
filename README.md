@@ -23,8 +23,8 @@ next, install packages listed in [package.json file](./package.json)<br>
 npm install
 ```
 
-you need to have `.env` file in root folder (can
-be `.env.production` for production and `.env.developmemt` for development, in the file you
+you need to have `.env` file (can
+be `.env.production` for production in `environments/production` folder and `.env.developmemt` for development in `environments/development` folder, in the file you
 need `VITE_[key]=value` each line. See list of required environment
 variables [here](#-list-of-available-environment-variables):<br>
 
