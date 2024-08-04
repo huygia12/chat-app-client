@@ -1,2 +1,2 @@
 export type * from "@/types/api/chat-events";
-export type * from "@/types/api/user";
+export type * from "@/types/api/auth";

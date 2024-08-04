@@ -1,19 +1,15 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { HttpStatusCode } from "axios";
-import { axiosInstance, reqConfig } from "@/services/axios";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
-import { FC, ReactElement, ReactEventHandler, useState } from "react";
-import { useAuth } from "@/hooks";
-import routes from "./routes";
-import Role from "@/types/enums/role";
+import { FC, ReactElement, useState } from "react";
 import DarkModeToggle from "@/components/ui/dark-mode-toggle";
-import { login } from "@/services/apis/auth";
 import LoginSchema, { LoginFormProps } from "@/schema/login-form-schema";
+import { useAuth } from "@/hooks";
 
 const Login: FC = (): ReactElement => {
   const {
@@ -25,38 +21,22 @@ const Login: FC = (): ReactElement => {
     resolver: zodResolver(LoginSchema),
   });
   const [passwordVisibility, setPasswordvisibility] = useState(false);
-  const { getUserDecoded, setAccessToken } = useAuth();
-  const location = useLocation();
+  const { login } = useAuth();
 
   const handleLoginFormSubmission: SubmitHandler<LoginFormProps> = async (
     data
   ) => {
     try {
-      const res = await login(data);
-      setAccessToken(res.data.access_token);
-
-      const userDecoded = getUserDecoded(res.data.access_token);
-
-      if (!userDecoded) throw new Error(`UserDecoded is ${userDecoded}`);
-
-      await routes.navigate(
-        userDecoded.role === Role.ADMIN ? "/admin" : "/messages",
-        {
-          replace: true,
-          state: { from: location.pathname },
-        }
-      );
+      await login(data, true);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status == HttpStatusCode.Conflict) {
-          setError("root", {
-            message: "Please logout your current account!",
-          });
-        } else if (error.response?.status == HttpStatusCode.BadRequest) {
-          setError("root", {
+        if (error.response?.status == HttpStatusCode.NotFound) {
+          setError("email", {
             message: "Account none exist!",
           });
-        } else if (error.response?.status == HttpStatusCode.Unauthorized) {
+        } else if (
+          error.response?.status == HttpStatusCode.UnprocessableEntity
+        ) {
           setError("password", {
             message: "Wrong password!",
           });
@@ -69,23 +49,9 @@ const Login: FC = (): ReactElement => {
         console.error(`Error response: ${JSON.stringify(error.response)}`);
       } else {
         console.error("Unexpected error:", error);
-      }
-    }
-  };
-
-  const handleRefreshToken: ReactEventHandler = async (event) => {
-    event.preventDefault();
-    try {
-      const res = await axiosInstance.get(
-        `${import.meta.env.VITE_AUTH_URL}/refresh`,
-        reqConfig
-      );
-      console.debug(JSON.stringify(res));
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error(`Error response: ${JSON.stringify(error.response)}`);
-      } else {
-        console.error("Unexpected error:", error);
+        setError("root", {
+          message: "This account currently cannot login!",
+        });
       }
     }
   };
@@ -182,22 +148,18 @@ const Login: FC = (): ReactElement => {
             <Button type="submit" variant="default" className="w-full mt-4">
               Login
             </Button>
-            <Button
-              onClick={handleRefreshToken}
-              variant="default"
-              className="w-full mt-4"
-            >
-              Refresh Token
-            </Button>
+            {errors.root && (
+              <div className="text-red-600">{errors.root.message}</div>
+            )}
             {/* <Button variant="outline" className="w-full">
               Login with Google
             </Button> */}
           </div>
-          <div className="mt-4 text-center text-sm dark:text-white">
+          <div className="text-center text-sm dark:text-white">
             Don&apos;t have an account?{" "}
             <NavLink
               to="/signup"
-              unstable_viewTransition={true}
+              unstable_viewTransition
               className="hover:underline text-cyan-500"
             >
               Sign up

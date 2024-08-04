@@ -15,7 +15,7 @@ const DarkModeToggle: FC<HTMLAttributes<HTMLButtonElement>> = () => {
         ref={draggableRef}
         icon={icon}
         onDoubleClick={context?.toggleMode}
-        className="z-50 m-2 shadow-general absolute top-4 left-4 transition-colors hover:border-yellow-500 hover:bg-yellow-500 focus:ring-0 focus:ring-offset-0"
+        className="z-50 m-2 shadow-general absolute top-2 right-2 transition-colors hover:border-yellow-500 hover:bg-yellow-500 focus:ring-0 focus:ring-offset-0"
       />
     </Draggable>
   );

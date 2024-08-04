@@ -33,6 +33,7 @@ const Nav: FC<NavProps> = ({ className, ...props }) => {
                     item.action && (await item.action());
                     props.setSelectedItem(item.title);
                   }}
+                  unstable_viewTransition
                   className={cn(
                     buttonVariants({
                       variant:
@@ -62,6 +63,7 @@ const Nav: FC<NavProps> = ({ className, ...props }) => {
             <NavLink
               key={index}
               to={item.url ?? "#"}
+              unstable_viewTransition
               onClick={async () => {
                 item.action && (await item.action());
                 props.setSelectedItem(item.title);

@@ -146,7 +146,25 @@ module.exports = {
         icon_lg: "20px",
         icon_xl: "26px",
       },
+      textShadow: {
+        404: "2px 2px 0px #c9c9c9, -2px -2px 0px #c9c9c9",
+        "404-blue":
+          "2px 2px 0px #0957ff, -2px -2px 0px #0957ff, 0px 0px 8px #1150d6",
+      },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function ({ addUtilities }) {
+      addUtilities({
+        ".text-shadow-4xx": {
+          textShadow: "2px 2px 0px #c9c9c9, -2px -2px 0px #c9c9c9",
+        },
+        ".text-shadow-4xx-blue": {
+          textShadow:
+            "2px 2px 0px #87ceeb, -2px -2px 0px #87ceeb, 0px 0px 8px #add8e6",
+        },
+      });
+    },
+  ],
 };

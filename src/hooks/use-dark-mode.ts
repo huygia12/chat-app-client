@@ -1,6 +1,4 @@
-import DarkModeContext, {
-  DarkModeContextValue,
-} from "@/context/dark-mode-context";
+import { DarkModeContext, type DarkModeContextProps } from "@/context";
 import { useContext } from "react";
 
 /**
@@ -9,7 +7,7 @@ import { useContext } from "react";
  * @returns All state values from {@link DarkModeProvider}.
  * @throw Error if you use outside `DarkModeProvider`.
  */
-const useDarkMode = (): DarkModeContextValue => {
+const useDarkMode = (): DarkModeContextProps => {
   const context = useContext(DarkModeContext);
 
   if (!context) {

@@ -1,4 +1,5 @@
-import { refreshToken } from "@/services/apis/auth";
+import auth from "@/helper/auth";
+import { authService } from "@/services/apis";
 import { Nullable } from "@/utils/declare";
 import axios, { AxiosRequestConfig } from "axios";
 import { fromUnixTime, isAfter } from "date-fns";
@@ -16,17 +17,19 @@ export const reqConfig: AxiosRequestConfig = {
 };
 
 axiosInstance.interceptors.request.use(async (config) => {
-  let accessToken = window.sessionStorage.getItem("access_token");
+  let accessToken: Nullable<string> = auth.token.getAccessToken();
   if (accessToken) {
     try {
       const tokenDecoded = jwtDecode<{ exp: number }>(accessToken);
 
       //If access token is expired
       if (!isAfter(fromUnixTime(tokenDecoded.exp), Date.now())) {
-        const newAccessToken: Nullable<string> = await refreshToken();
+        const newAccessToken: Nullable<string> =
+          await authService.refreshToken();
+        console.debug("AXIOS CONFIG : request new AT", newAccessToken);
 
         if (newAccessToken) {
-          window.sessionStorage.setItem("access_token", newAccessToken);
+          auth.token.setAccessToken(newAccessToken);
           accessToken = newAccessToken;
         }
       }

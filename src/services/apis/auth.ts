@@ -55,4 +55,4 @@ const logout = async (): Promise<AxiosResponse> => {
   return res;
 };
 
-export { refreshToken, login, logout };
+export default { refreshToken, login, logout };

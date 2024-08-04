@@ -1,4 +1,4 @@
-import { Gender, Role } from "../enums";
+import { Gender, Role } from "./enums";
 
 interface User {
   userId: bigint;
@@ -18,11 +18,4 @@ interface User {
   deletedAt: Date;
 }
 
-interface UserDecoded {
-  userId: bigint;
-  email: string;
-  username: string;
-  role: Role;
-}
-
-export type { User, UserDecoded };
+export type { User };

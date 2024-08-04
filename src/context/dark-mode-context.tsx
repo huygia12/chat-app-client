@@ -2,13 +2,13 @@ import { useLocalStorage } from "@/hooks";
 import { Nullable } from "@/utils/declare";
 import { Context, ReactNode, createContext, useEffect } from "react";
 
-interface DarkModeContextValue {
+interface DarkModeContextProps {
   isDarkMode: boolean;
   toggleMode: () => void;
 }
 
-const DarkModeContext: Context<Nullable<DarkModeContextValue>> = createContext(
-  null as Nullable<DarkModeContextValue>
+const DarkModeContext: Context<Nullable<DarkModeContextProps>> = createContext(
+  null as Nullable<DarkModeContextProps>
 );
 
 /**
@@ -40,5 +40,5 @@ const DarkModeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   );
 };
 
-export { DarkModeProvider, type DarkModeContextValue };
+export { DarkModeProvider, type DarkModeContextProps };
 export default DarkModeContext;

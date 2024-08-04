@@ -4,9 +4,7 @@ import { Label } from "@/components/ui/label";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import routes from "./routes";
-import { axiosInstance, reqConfig } from "@/services/axios";
+import { FC, useState } from "react";
 import axios, { HttpStatusCode } from "axios";
 import {
   Select,
@@ -16,7 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Gender from "@/types/enums/gender";
 
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -24,69 +21,77 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, Eye, EyeOff } from "lucide-react";
-import { format } from "date-fns";
+import {
+  CalendarIcon,
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import { formatDate } from "date-fns";
 import { cn } from "@/lib/utils";
-import { z } from "zod";
 import DarkModeToggle from "@/components/ui/dark-mode-toggle";
+import { SignupFormProps, SignupSchema } from "@/schema";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import useCustomNavigate from "@/hooks/use-custom-navigate";
+import { Gender } from "@/utils/enums";
+import { userService } from "@/services/apis";
 
-const SignupSchema = z.object({
-  userName: z.string().min(1, { message: "Name is required!" }),
-  firstName: z.string().min(1, { message: "First name is required!" }),
-  lastName: z.string().min(1, { message: "Last name is required!" }),
-  email: z.string().email({ message: "Invalid email!" }),
-  phoneNumber: z.string().min(1, { message: "Phone number is required!" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must contain at least 8 character!" }),
-  birthDay: z.string().min(1, { message: "Birthday is required!" }),
-});
-
-type SignupForm = z.infer<typeof SignupSchema>;
-
-const Signup = (): JSX.Element => {
+const Signup: FC = () => {
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm<SignupForm>({
+  } = useForm<SignupFormProps>({
     resolver: zodResolver(SignupSchema),
   });
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<Date>(new Date());
+  const [gender, setGender] = useState<string>(Gender.MALE);
   const [passwordVisibility, setPasswordvisibility] = useState(false);
+  const [selectedAvatarIndex, setSelectedAvatarIndex] = useState(0);
+  const { navigate } = useCustomNavigate();
 
-  const handleSignupFormSubmission: SubmitHandler<SignupForm> = async (
+  const handleSignupFormSubmission: SubmitHandler<SignupFormProps> = async (
     data
   ) => {
     try {
-      await axiosInstance.post(
-        "/users/signup",
-        {
-          name: data.userName.trim(),
-          email: data.email.trim(),
-          password: data.password.trim(),
-          role: "USER",
-        },
-        reqConfig
-      );
+      await userService.signup(data, date, selectedAvatarIndex);
 
-      await routes.navigate("/login", { unstable_viewTransition: true });
+      console.debug("signup successful");
+      navigate("/login", { unstable_viewTransition: true });
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status == HttpStatusCode.Conflict) {
           setError("email", {
-            message: "Email đã được sử dụng!",
+            message: "This email has been used!",
+          });
+        } else if (
+          error.response?.status == HttpStatusCode.BadRequest &&
+          String(error.response?.data?.message ?? "").includes("Date of birth")
+        ) {
+          setError("birthDay", {
+            message: error.response.data.message,
           });
         } else {
           setError("root", {
-            message: "Đăng ký thất bại!",
+            message: "Register failure!",
           });
         }
         // Handle error response if available
         console.error(`Error response: ${JSON.stringify(error.response)}`);
       } else {
         console.error("Unexpected error:", error);
+        setError("root", {
+          message: "Register failure!",
+        });
       }
     }
   };
@@ -126,6 +131,7 @@ const Signup = (): JSX.Element => {
               <Input
                 {...register("userName")}
                 id="username"
+                defaultValue={"Hoàng"}
                 type="text"
                 placeholder="abc"
                 size={40}
@@ -149,6 +155,7 @@ const Signup = (): JSX.Element => {
                     {...register("firstName")}
                     id="firstname"
                     type="text"
+                    defaultValue={"Nguyễn"}
                     placeholder="abc"
                     size={40}
                     onKeyDown={(e) => handleEnterKeyEvent(e)}
@@ -166,6 +173,7 @@ const Signup = (): JSX.Element => {
                     {...register("lastName")}
                     id="lastname"
                     type="text"
+                    defaultValue={"Huy"}
                     placeholder="abc"
                     size={40}
                     onKeyDown={(e) => handleEnterKeyEvent(e)}
@@ -201,6 +209,7 @@ const Signup = (): JSX.Element => {
                 {...register("email")}
                 id="email"
                 type="email"
+                defaultValue={"hoang@gmail.com"}
                 placeholder="abc@example.com"
                 size={40}
                 onKeyDown={(e) => handleEnterKeyEvent(e)}
@@ -221,6 +230,7 @@ const Signup = (): JSX.Element => {
                 {...register("phoneNumber")}
                 id="phonenumber"
                 type="text"
+                defaultValue={"123456678"}
                 placeholder="123-45-678"
                 size={40}
                 onKeyDown={(e) => handleEnterKeyEvent(e)}
@@ -243,6 +253,7 @@ const Signup = (): JSX.Element => {
                 <Input
                   {...register("password")}
                   id="password"
+                  defaultValue={"123456"}
                   type={passwordVisibility ? "text" : "password"}
                   onKeyDown={(e) => handleEnterKeyEvent(e)}
                   size={40}
@@ -276,8 +287,15 @@ const Signup = (): JSX.Element => {
                   >
                     Gender
                   </Label>
-                  <Select defaultValue={Gender.MALE}>
-                    <SelectTrigger className="w-full text-black dark:text-white">
+                  <Select
+                    defaultValue={gender}
+                    onValueChange={(value) => setGender(value)}
+                  >
+                    <SelectTrigger
+                      value={gender}
+                      {...register("gender")}
+                      className="w-full text-black dark:text-white"
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -308,14 +326,13 @@ const Signup = (): JSX.Element => {
                       <Input
                         {...register("birthDay")}
                         id="birthday"
-                        contentEditable="false"
                         className={cn(
                           "w-full font-normal pl-8",
                           !date && "text-muted-foreground"
                         )}
                         size={40}
                         onKeyDown={(e) => handleEnterKeyEvent(e)}
-                        value={date && format(date, "PPP")}
+                        value={formatDate(date, "yyyy-MM-dd")}
                         placeholder="Pick a date"
                       />
                     </PopoverTrigger>
@@ -323,15 +340,21 @@ const Signup = (): JSX.Element => {
                       <Calendar
                         mode="single"
                         selected={date}
-                        onSelect={setDate}
-                        initialFocus
+                        onSelect={(date) => date && setDate(date)}
+                        className="rounded-md border"
                       />
                     </PopoverContent>
                   </Popover>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <span></span>
+                <span>
+                  {errors.gender && (
+                    <span className="text-red-600">
+                      {errors.gender.message}
+                    </span>
+                  )}
+                </span>
                 <span>
                   {errors.birthDay && (
                     <span className="text-red-600">
@@ -341,11 +364,55 @@ const Signup = (): JSX.Element => {
                 </span>
               </div>
             </div>
-            <Button type="submit" variant="default" className="w-full">
+            <Carousel className="mt-4">
+              <ChevronDown
+                size={30}
+                className="text-effect-dark absolute top-[-2rem] left-[10rem]"
+              />
+              <CarouselContent>
+                <CarouselItem className="basis-1/3" />
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="flex justify-center basis-1/3"
+                  >
+                    <Avatar className="h-[4rem] cursor-pointer w-fit">
+                      <AvatarImage
+                        src={`/avt-template/avt${index + 1}.png`}
+                        alt={`AVT-${index + 1}`}
+                        className="h-[4rem] object-cover"
+                      />
+                      <AvatarFallback>{`AVT-${index + 1}`}</AvatarFallback>
+                    </Avatar>
+                  </CarouselItem>
+                ))}
+                <CarouselItem className="basis-1/3" />
+              </CarouselContent>
+              <ChevronUp
+                size={30}
+                className="text-effect-dark absolute bottom-[-2rem] left-[10rem]"
+              />
+              <CarouselPrevious
+                onClickCapture={() =>
+                  setSelectedAvatarIndex(selectedAvatarIndex - 1)
+                }
+                className="left-[1rem] h-[5rem] w-[5rem] !opacity-0"
+              />
+              <CarouselNext
+                onClickCapture={() =>
+                  setSelectedAvatarIndex(selectedAvatarIndex + 1)
+                }
+                className="right-[1rem] h-[5rem] w-[5rem] !opacity-0"
+              />
+            </Carousel>
+            <Button type="submit" variant="default" className="mt-5 w-full">
               Signup
             </Button>
+            {errors.root && (
+              <span className="text-red-600">{errors.root.message}</span>
+            )}
           </div>
-          <div className="mt-4 text-center text-sm dark:text-white">
+          <div className="text-center text-sm dark:text-white">
             Already have an account?{" "}
             <NavLink
               to="/login"
